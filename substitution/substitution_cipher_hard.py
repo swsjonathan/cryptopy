@@ -5,38 +5,60 @@ import json
 
 def main():
     parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("-e", "--encrypt", help = "Encrpyt plain text", action="store_true")
-    group.add_argument("-d", "--decrypt", help ="Decrypt cipher text", action="store_true")
-    parser.add_argument("-t", "--text", help="Add the text you want to encrypt")
+    method_group = parser.add_mutually_exclusive_group()
+    input_group = parser.add_mutually_exclusive_group()
+    method_group.add_argument("-e", "--encrypt", help = "Encrpyt plain text", action="store_true")
+    method_group.add_argument("-d", "--decrypt", help ="Decrypt cipher text", action="store_true")
+    input_group.add_argument("-i", "--input", help="Provide the file you want to encrypt/decrypt")
+    input_group.add_argument("-t", "--text", help="Add the text you want to encrypt/decrypt")
+    parser.add_argument("-o", "--output", help="Provide the file you want to output the results to")
+    
     args = parser.parse_args()
     
    #add output/input file name
    #create folders to store keys, cipher,plain text
     if args.encrypt:
-        key = generate_key()  
-        plain_text = args.text
+        key = generate_key()
+
+        if args.input:
+            with open(args.input) as f:
+                plain_text = f.read()
+
+        else:
+            plain_text = args.text
         
         #store key in a file 
-        with open('key.json', 'w') as f:
+        with open('keys/key.json', 'w') as f:
             json.dump(key,f)
 
         cipher_text = encryptor(plain_text, key)
-        with open('cipher_text.txt', 'w') as f:
-            f.write(cipher_text)
+
+        if args.output:
+            with open('cipher/'+ args.output, 'w') as f:
+                f.write(cipher_text)
+        else:
+            print(cipher_text)
 
 
 
     elif args.decrypt:
-        cipher_text = args.text
+        if args.input:
+            with open(args.input) as f:
+                cipher_text = f.read()
+            
+        else:
+            cipher_text = args.text
         #read key from a file 
-        with open('key.json') as f:
+        with open('keys/key.json') as f:
             key = json.load(f)
 
-        with open('cipher_text.txt') as f:
-            cipher_text = f.read()
         plain_text = decryptor(cipher_text,key)
-        print(plain_text)
+
+        if args.output:
+            with open('plain/'+ args.output, 'w') as f:
+                f.write(plain_text)
+        else:
+            print(plain_text)
    
    
 #generate cipher key
@@ -60,7 +82,7 @@ def encryptor(plain_text, key):
     return ''.join(cipher_text)
         
 
-# #decrypt cipher text using stored key
+#decrypt cipher text using stored key
 def decryptor(cipher_text, key):
     plain_text = []
     for i in cipher_text:
