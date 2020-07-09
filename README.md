@@ -1,6 +1,6 @@
 # cryptopy
 
-A personal project to learn cryptogrphy by implementing cryptographic algorithms in python. I will periodically update this repo with the algorithms I learn and the implmentations of it
+A personal project to learn cryptography by implementing cryptographic algorithms in python. I will periodically update this repo with the algorithms I learn and their pythonic implementations.
 
 ## Goal 
 - To implement major cryptographic algorithms, and understand the base concepts of it. 
