@@ -1,4 +1,5 @@
 import secrets
+import random
 import string
 import argparse
 import json
@@ -9,6 +10,7 @@ def main():
     input_group = parser.add_mutually_exclusive_group()
     method_group.add_argument("-e", "--encrypt", help = "Encrpyt plain text", action="store_true")
     method_group.add_argument("-d", "--decrypt", help ="Decrypt cipher text", action="store_true")
+    parser.add_argument("-k", "--keyfile", help="Provide the key to be used in decryption")
     input_group.add_argument("-i", "--input", help="Provide the file you want to encrypt/decrypt")
     input_group.add_argument("-t", "--text", help="Add the text you want to encrypt/decrypt")
     parser.add_argument("-o", "--output", help="Provide the file you want to output the results to")
@@ -19,6 +21,7 @@ def main():
    #create folders to store keys, cipher,plain text
     if args.encrypt:
         key = generate_key()
+        rnd_key = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
 
         if args.input:
             with open(args.input) as f:
@@ -28,7 +31,7 @@ def main():
             plain_text = args.text
         
         #store key in a file 
-        with open('keys/key.json', 'w') as f:
+        with open('keys/' + rnd_key + '.json', 'w') as f:
             json.dump(key,f)
 
         cipher_text = encryptor(plain_text, key)
@@ -38,8 +41,7 @@ def main():
                 f.write(cipher_text)
         else:
             print(cipher_text)
-
-
+        print(f'Key File Name: {rnd_key}.json')
 
     elif args.decrypt:
         if args.input:
@@ -49,7 +51,7 @@ def main():
         else:
             cipher_text = args.text
         #read key from a file 
-        with open('keys/key.json') as f:
+        with open(args.key) as f:
             key = json.load(f)
 
         plain_text = decryptor(cipher_text,key)
