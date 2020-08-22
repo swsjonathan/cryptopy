@@ -1,4 +1,4 @@
-import secrets
+import random
 import string
 import json
 
@@ -14,7 +14,8 @@ def main():
         f.write(cipher_text)
   
     #store key in a file 
-    decryptor(cipher_text,key)
+    plain_text = decryptor(cipher_text,key)
+    print(plain_text)
 
 #generate cipher key
 def generate_key():
@@ -23,7 +24,7 @@ def generate_key():
     characters_list = list(characters)
 
     for i in characters:
-        value = secrets.choice(characters_list)
+        value = random.choice(characters_list)
         key[i] = value
         characters_list.remove(value)
     return key
@@ -43,7 +44,7 @@ def decryptor(cipher_text, key):
     for i in cipher_text:
         if i in key.values():
             plain_text.append(list(key.keys())[list(key.values()).index(i)])
-    print(''.join(plain_text))
+    return ''.join(plain_text)
 
 if __name__ == "__main__":
     main()
